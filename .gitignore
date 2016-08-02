@@ -1,3 +1,4 @@
 secret.json
 config.prod.json
 node_modules/
+*.pdf
