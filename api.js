@@ -43,9 +43,7 @@ app.post('getPdfBase64FromHtml', function (request, response) {
         })
         .catch(function (reason) {
             return res.send(reason);
-        })
-
-
+        });
 });
 
 /*
@@ -55,9 +53,9 @@ app.post('/createPdfFromHtml', function (request, response) {
 
     let html = request.body.html,
         name = request.body.name || PDFCreator.getRandomPdfName();
-
-    var pdfCreator = new PDFCreator();
     
+    var pdfCreator = new PDFCreator();
+
     pdfCreator.createFromHtml(html, name)
         .then(function (pdfData) {
             response.setHeader('Content-disposition', 'attachment; filename="' + name + '"');
@@ -65,7 +63,7 @@ app.post('/createPdfFromHtml', function (request, response) {
             return response.send(pdfData);
         })
         .catch(function (reason) {
-            return response.send('');
+            return response.send(reason);
         });
 
 });
@@ -75,11 +73,18 @@ app.post('/createPdfFromHtmlAndTemplate', function (request, response) {
         name = request.body.name || PDFCreator.getRandomPdfName(),
         template = request.body.template,
         pdfCreator = new PDFCreator();
+    console.log('bod', request.body);
+    console.info('Calling createPdfFromHtmlAndTemplate, html: %s, name: %s, template: %s', html, name, template);
     
-    pdfCreator.createFromTemplate()
-    
-
-
+    pdfCreator.createFromTemplate(html, template, name)
+        .then(function (pdfData) {
+            response.setHeader('Content-disposition', 'attachment; filename="' + name + '"');
+            response.setHeader('Content-type', 'application/pdf');
+            return response.send(pdfData);
+        })
+        .catch(function (reason) {
+            return response.send(reason);
+        });
 });
 
 

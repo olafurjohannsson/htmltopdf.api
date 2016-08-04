@@ -38,7 +38,7 @@ class PDFCreator {
                             return reject(err);
                         }
                         try {
-                            resolve(new Buffer(data).toString());
+                            resolve(new Buffer(data).toString('base64'));
                         }
                         catch (e) {
                             return reject(e);
@@ -53,10 +53,40 @@ class PDFCreator {
         });
     }
 
-    createFromTemplate() {
+    createFromTemplate(html, template, name) {
         return new Promise((resolve, reject) => {
+            if (!html) {
+                return reject('Invalid HTML');
+            }
             
-            
+            if (!template) {
+                return reject('Invalid template');
+            }
+
+            if (!name) {
+                return reject('Invalid PDF name');
+            }
+
+            let pdfNameAndPath = path.join(this.path, name);
+
+            htmltopdf.createFromTemplate(template, html, name, (err, success) => {
+                if (err && !success) {
+                    fs.readFile(pdfNameAndPath, (err, data) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        try {
+                            resolve(new Buffer(data).toString('base64'));
+                        }
+                        catch (e) {
+                            return reject(e);
+                        }
+                    })
+                }
+                else {
+                    return reject(err);
+                }
+            });
         });
     }
 
